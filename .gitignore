@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+local-data/
+outputs/
+*.pdf
+*.docx
+*.png
+*.jpg
+dist/
+*.zip
+*.manifest.json
+tests/fixture-validation.json
+

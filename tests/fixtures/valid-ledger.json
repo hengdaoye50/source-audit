@@ -1,0 +1,143 @@
+{
+  "schema_version": "0.1",
+  "sources": [
+    {
+      "id": "S1",
+      "title": "自制测试：数字服务与就业",
+      "kind": "academic_article",
+      "sha256": "2f4811c5e83d1a77bcc74842ef1fb7513ab1f45fa7a1107ebf896d555dfa5003",
+      "coverage": "full",
+      "origin": {
+        "kind": "synthetic",
+        "locator": "synthetic:service-employment",
+        "snapshot_path": null
+      },
+      "dates": {
+        "issued": null,
+        "published": null,
+        "effective": null,
+        "accessed": null
+      },
+      "pages": [
+        {
+          "pdf_page": 1,
+          "print_page": "101",
+          "segments": [
+            {
+              "id": "abstract",
+              "region": "abstract",
+              "section": "摘要",
+              "text": "本文考察数字服务与就业的关系。",
+              "extraction": "text_layer",
+              "review_status": "verified"
+            },
+            {
+              "id": "body1",
+              "region": "body",
+              "section": "四、研究结果",
+              "text": "在本研究样本中，数字服务改善了办事效率，但未发现其显著增加就业。",
+              "extraction": "text_layer",
+              "review_status": "verified"
+            }
+          ]
+        },
+        {
+          "pdf_page": 2,
+          "print_page": "102",
+          "segments": [
+            {
+              "id": "body2",
+              "region": "body",
+              "section": "四、研究结果",
+              "text": "上述结果限于本样本，不能据此判断其他地区的就业变化。",
+              "extraction": "text_layer",
+              "review_status": "verified"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "target": {
+        "text": "研究表明，数字服务改善了样本地区的办事效率。",
+        "pdf_page": 3,
+        "print_page": "203",
+        "section": "研究评述"
+      },
+      "citation_role": "explicit",
+      "attributed_source_ids": [
+        "S1"
+      ],
+      "subclaims": [
+        {
+          "id": "C1.1",
+          "text": "数字服务改善了样本地区的办事效率。"
+        }
+      ],
+      "status": "direct",
+      "reason": "来源正文直接支持办事效率命题，目标保留样本限定。",
+      "recommendation": "可保留，不能外推为增加就业。",
+      "evidence": [
+        {
+          "id": "E1",
+          "source_id": "S1",
+          "source_sha256": "2f4811c5e83d1a77bcc74842ef1fb7513ab1f45fa7a1107ebf896d555dfa5003",
+          "quote": "在本研究样本中，数字服务改善了办事效率，但未发现其显著增加就业。",
+          "section": "四、研究结果",
+          "pdf_pages": [
+            1
+          ],
+          "print_pages": [
+            "101"
+          ],
+          "spans": [
+            {
+              "segment_id": "body1",
+              "start": 0,
+              "end": 32
+            }
+          ],
+          "completeness_review": "verified",
+          "context_review": "verified"
+        }
+      ],
+      "assessments": [
+        {
+          "subclaim_id": "C1.1",
+          "evidence_ids": [
+            "E1"
+          ],
+          "support": "supported",
+          "reason": "对象、样本与判断强度相符。",
+          "boundaries": {
+            "object_match": true,
+            "time_match": true,
+            "geography_match": true,
+            "causal_strength_match": true
+          }
+        }
+      ],
+      "search": {
+        "status": "complete",
+        "source_ids": [
+          "S1"
+        ],
+        "regions": [
+          "body"
+        ],
+        "queries": [
+          "数字服务",
+          "办事效率"
+        ],
+        "note": "自制材料正文已完整读取。"
+      },
+      "quotation_mode": "paraphrase",
+      "verbatim_text": null,
+      "review_status": "reviewed",
+      "policy_checks": null
+    }
+  ]
+}

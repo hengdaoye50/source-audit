@@ -1,0 +1,83 @@
+{
+  "stage": "unified_ledger_export_and_local_plugin_install",
+  "date": "2026-10-02",
+  "plugin_version": "0.4.0",
+  "reader_version": "0.2.5",
+  "automated_tests": {
+    "run": 112,
+    "failures": 0,
+    "errors": 0,
+    "passed": true,
+    "command": "python -m unittest discover -s tests"
+  },
+  "reference_reading": {
+    "sources": 29,
+    "pdf_pages": 407,
+    "ocr_pages": 0,
+    "schema_errors": 0,
+    "source_cache_reuse_checked": true
+  },
+  "prior_quote_extraction_regression": {
+    "found": 62,
+    "total": 62,
+    "semantic_accuracy_claim": false
+  },
+  "docx_reading_smoke_test": {
+    "sample": "user_revised_report_not_new_manuscript",
+    "nonempty_blocks": 607,
+    "ocr_used": false,
+    "page_numbers_inferred": false
+  },
+  "scan_smoke_test": {
+    "pages": 2,
+    "ocr": "Windows zh-Hans-CN",
+    "quality_check_passed": true,
+    "whole_manuscript_checked": false,
+    "text_reviewed": false
+  },
+  "extracted_segments_automatically_reviewed": false,
+  "semantic_cases": {
+    "count": 15,
+    "human_calibrated": false,
+    "model_evaluated": false
+  },
+  "word_report_export_implemented": true,
+  "installed_in_codex": true,
+  "github_published": false,
+  "two_case_trial": {
+    "manuscripts": 2,
+    "main_format": "docx",
+    "main_ocr_used": false,
+    "citation_groups": 42,
+    "unique_sources": 82,
+    "unique_body_quotes": 96,
+    "quote_occurrences_in_reports": 100,
+    "source_binding_errors": 0,
+    "review": "executor_only",
+    "independent_accuracy_evaluation": false,
+    "reports_delivered": 2,
+    "report_contract": "trial-report-0.1_preview_distinct_from_ledger"
+  },
+  "host_discovery": {
+    "skill": "source-audit:source-audit",
+    "enabled": true,
+    "errors": 0,
+    "model_turn_created": false
+  },
+  "installed_copy_tests": {
+    "run": 112,
+    "errors": 0,
+    "failures": 0,
+    "passed": true
+  },
+  "unified_export": {
+    "ledger_versions": [
+      "0.1",
+      "0.2"
+    ],
+    "word_source_location": true,
+    "policy_metadata_preserved": true,
+    "legacy_trial_input_compatible": true,
+    "installed_chat_end_to_end_run": false
+  }
+}

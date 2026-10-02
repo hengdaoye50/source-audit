@@ -1,0 +1,18 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "source-audit",
+  "version": "0.4.0",
+  "description": "论文与政策来源核准：Word读取、引用候选、PDF提取与必要OCR、正文证据账本及Word报告导出。语义由Codex执行者复核。",
+  "author": {"name": "Jasper Zhang"},
+  "repository": "https://github.com/hengdaoye50/source-audit",
+  "license": "MIT",
+  "extensions": {"com.openai": {"interface": {
+    "displayName": "文献与政策来源核准",
+    "shortDescription": "核对正文引用，定位原文证据，生成Word报告",
+    "longDescription": "本地读取Word和PDF，必要时按页OCR；逐项核对正文证据、版本及支持边界，生成可追溯的来源核准报告。",
+    "developerName": "Jasper Zhang",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "defaultPrompt": ["请核准指定文件夹内论文引用的正文来源，并生成Word报告。", "请核对主稿中的政策引用，区分正式原件、解读和二手归纳。"]
+  }}}
+}

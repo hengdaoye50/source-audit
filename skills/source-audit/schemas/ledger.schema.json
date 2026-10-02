@@ -1,0 +1,851 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:source-audit:ledger:0.1",
+  "title": "Source Audit Evidence Ledger",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": [
+        "0.1",
+        "0.2"
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/source"
+      },
+      "minItems": 1
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/claim"
+      },
+      "minItems": 1
+    },
+    "report": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "manuscript_title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "highlights": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "additional_notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "sources",
+    "claims"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "segment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "region": {
+          "type": "string",
+          "enum": [
+            "abstract",
+            "body",
+            "bibliography",
+            "other",
+            "unknown"
+          ]
+        },
+        "section": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "extraction": {
+          "type": "string",
+          "enum": [
+            "text_layer",
+            "ocr"
+          ]
+        },
+        "review_status": {
+          "type": "string",
+          "enum": [
+            "verified",
+            "unverified"
+          ]
+        },
+        "verification_image": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "region",
+        "section",
+        "text",
+        "extraction",
+        "review_status"
+      ],
+      "additionalProperties": false
+    },
+    "page": {
+      "type": "object",
+      "properties": {
+        "pdf_page": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "print_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "segments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/segment"
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "pdf_page",
+        "print_page",
+        "segments"
+      ],
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "academic_article",
+            "policy_document",
+            "official_interpretation",
+            "secondary_summary",
+            "other"
+          ]
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "coverage": {
+          "type": "string",
+          "enum": [
+            "full",
+            "partial",
+            "unreadable"
+          ]
+        },
+        "origin": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "local",
+                "web",
+                "synthetic"
+              ]
+            },
+            "locator": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "snapshot_path": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          },
+          "required": [
+            "kind",
+            "locator",
+            "snapshot_path"
+          ],
+          "additionalProperties": false
+        },
+        "dates": {
+          "type": "object",
+          "properties": {
+            "issued": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "published": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "effective": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "accessed": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          "required": [
+            "issued",
+            "published",
+            "effective",
+            "accessed"
+          ],
+          "additionalProperties": false
+        },
+        "pages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/page"
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "kind",
+        "sha256",
+        "coverage",
+        "origin",
+        "dates",
+        "pages"
+      ],
+      "additionalProperties": false
+    },
+    "span": {
+      "type": "object",
+      "properties": {
+        "segment_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "segment_id",
+        "start",
+        "end"
+      ],
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "source_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "source_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "quote": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "section": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "pdf_pages": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "print_pages": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "spans": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/span"
+          },
+          "minItems": 0
+        },
+        "completeness_review": {
+          "type": "string",
+          "enum": [
+            "verified",
+            "pending"
+          ]
+        },
+        "context_review": {
+          "type": "string",
+          "enum": [
+            "verified",
+            "pending"
+          ]
+        },
+        "docx_location": {
+          "type": "object",
+          "properties": {
+            "block_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "location": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "block_id",
+            "location"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "source_id",
+        "source_sha256",
+        "quote",
+        "section",
+        "pdf_pages",
+        "print_pages",
+        "spans",
+        "completeness_review",
+        "context_review"
+      ],
+      "additionalProperties": false
+    },
+    "assessment": {
+      "type": "object",
+      "properties": {
+        "subclaim_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._-]+$"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "support": {
+          "type": "string",
+          "enum": [
+            "supported",
+            "partial",
+            "unsupported",
+            "unknown"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "boundaries": {
+          "type": "object",
+          "properties": {
+            "object_match": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "time_match": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "geography_match": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "causal_strength_match": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "object_match",
+            "time_match",
+            "geography_match",
+            "causal_strength_match"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "subclaim_id",
+        "evidence_ids",
+        "support",
+        "reason",
+        "boundaries"
+      ],
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "claimed_level": {
+          "type": "string",
+          "enum": [
+            "formal",
+            "interpretation",
+            "secondary"
+          ]
+        },
+        "evidence_level": {
+          "type": "string",
+          "enum": [
+            "formal",
+            "interpretation",
+            "secondary"
+          ]
+        },
+        "quotation_verified": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "dates_reviewed": {
+          "type": "boolean"
+        },
+        "claims_originals_verified": {
+          "type": "boolean"
+        },
+        "version_note": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "claimed_level",
+        "evidence_level",
+        "quotation_verified",
+        "dates_reviewed",
+        "claims_originals_verified",
+        "version_note"
+      ],
+      "additionalProperties": false
+    },
+    "claim": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "target": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "pdf_page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1
+            },
+            "print_page": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "section": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "docx_location": {
+              "type": "object",
+              "properties": {
+                "manuscript_sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "block_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9._-]+$"
+                },
+                "location": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "paragraph",
+                        "table_cell",
+                        "footnote",
+                        "endnote"
+                      ]
+                    },
+                    "paragraph_index": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "table_index": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "row_index": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "cell_index": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "note_id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "\\S"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "paragraph_index"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "manuscript_sha256",
+                "block_id",
+                "location"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "text",
+            "pdf_page",
+            "print_page",
+            "section"
+          ],
+          "additionalProperties": false
+        },
+        "citation_role": {
+          "type": "string",
+          "enum": [
+            "explicit",
+            "suggested",
+            "policy"
+          ]
+        },
+        "attributed_source_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._-]+$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "subclaims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9._-]+$"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            },
+            "required": [
+              "id",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "direct",
+            "partial",
+            "insufficient",
+            "not_found",
+            "unable"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "recommendation": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence"
+          },
+          "minItems": 0
+        },
+        "assessments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/assessment"
+          },
+          "minItems": 1
+        },
+        "search": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "complete",
+                "incomplete"
+              ]
+            },
+            "source_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9._-]+$"
+              },
+              "minItems": 0,
+              "uniqueItems": true
+            },
+            "regions": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "body",
+                  "abstract",
+                  "bibliography",
+                  "other"
+                ]
+              },
+              "minItems": 0,
+              "uniqueItems": true
+            },
+            "queries": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "minItems": 0
+            },
+            "note": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          },
+          "required": [
+            "status",
+            "source_ids",
+            "regions",
+            "queries",
+            "note"
+          ],
+          "additionalProperties": false
+        },
+        "quotation_mode": {
+          "type": "string",
+          "enum": [
+            "verbatim",
+            "paraphrase"
+          ]
+        },
+        "verbatim_text": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "review_status": {
+          "type": "string",
+          "enum": [
+            "reviewed",
+            "pending"
+          ]
+        },
+        "policy_checks": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "claimed_level": {
+              "type": "string",
+              "enum": [
+                "formal",
+                "interpretation",
+                "secondary"
+              ]
+            },
+            "evidence_level": {
+              "type": "string",
+              "enum": [
+                "formal",
+                "interpretation",
+                "secondary"
+              ]
+            },
+            "quotation_verified": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "dates_reviewed": {
+              "type": "boolean"
+            },
+            "claims_originals_verified": {
+              "type": "boolean"
+            },
+            "version_note": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          },
+          "required": [
+            "claimed_level",
+            "evidence_level",
+            "quotation_verified",
+            "dates_reviewed",
+            "claims_originals_verified",
+            "version_note"
+          ],
+          "additionalProperties": false
+        },
+        "heading": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "target",
+        "citation_role",
+        "attributed_source_ids",
+        "subclaims",
+        "status",
+        "reason",
+        "recommendation",
+        "evidence",
+        "assessments",
+        "search",
+        "quotation_mode",
+        "verbatim_text",
+        "review_status",
+        "policy_checks"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

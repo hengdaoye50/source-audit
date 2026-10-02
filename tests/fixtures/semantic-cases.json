@@ -1,0 +1,110 @@
+{
+  "status": "draft_expected_decisions_not_human_calibrated",
+  "cases": [
+    {
+      "id": "direct",
+      "target": "样本中的数字服务改善了办事效率。",
+      "source_context": "正文明确报告样本办事效率改善。",
+      "expected_status": "direct",
+      "criterion": "保留样本限定"
+    },
+    {
+      "id": "compound",
+      "target": "数字服务改善办事效率并增加就业。",
+      "source_context": "正文报告效率改善，但未发现显著增加就业。",
+      "expected_status": "partial",
+      "criterion": "拆为两个子命题，不能共同通过"
+    },
+    {
+      "id": "abstract-only",
+      "target": "数字服务增加就业。",
+      "source_context": "摘要提到就业改善，正文未发现该结论。",
+      "expected_status": "not_found",
+      "criterion": "摘要不得充当正文证据"
+    },
+    {
+      "id": "wrong-object",
+      "target": "扶贫平台建设证明县域数字经济发展成功。",
+      "source_context": "正文仅讨论扶贫数据登记效率。",
+      "expected_status": "insufficient",
+      "criterion": "研究对象与结果均不匹配"
+    },
+    {
+      "id": "negation",
+      "target": "数字服务显著增加就业。",
+      "source_context": "正文写“未发现其显著增加就业”。",
+      "expected_status": "insufficient",
+      "criterion": "保留否定词，不能截成肯定句"
+    },
+    {
+      "id": "national-to-county",
+      "target": "全国试点研究证明X县已经成功。",
+      "source_context": "正文报告全国试点的一般组态，未单独检验X县。",
+      "expected_status": "insufficient",
+      "criterion": "全国结论不能证明特定县"
+    },
+    {
+      "id": "causal-upgrade",
+      "target": "数字能力提高导致收入增长。",
+      "source_context": "正文仅报告数字能力与收入正相关，未作因果识别。",
+      "expected_status": "partial",
+      "criterion": "将导致缩为相关并解释限制"
+    },
+    {
+      "id": "interpretation",
+      "target": "正式规划逐字提出某项机制。",
+      "source_context": "同样文字只见于官网专家解读，正式规划未定位到。",
+      "expected_status": "insufficient",
+      "criterion": "区分解读与正式文件"
+    },
+    {
+      "id": "stitched-policy",
+      "target": "政策引号内写“甲乙丙”。",
+      "source_context": "正文第1段有“甲乙”，第3段有“丙”，中间有其他内容。",
+      "expected_status": "partial",
+      "criterion": "方向可支持但不是连续逐字引文"
+    },
+    {
+      "id": "secondary-years",
+      "target": "作者已核验2017—2020各年度政策原件。",
+      "source_context": "仅读取一篇对四年度政策的二手总结。",
+      "expected_status": "insufficient",
+      "criterion": "不得声称年度原件均已核验"
+    },
+    {
+      "id": "unreadable",
+      "target": "扫描原件中的某数字为2024。",
+      "source_context": "年份模糊，OCR识别2021，原页仍无法辨认。",
+      "expected_status": "unable",
+      "criterion": "标待核，不能猜年份"
+    },
+    {
+      "id": "suggested",
+      "target": "书目列了该文，因此此句已有明确引用。",
+      "source_context": "正文未标引该文，只能找到可能适配的补引位置。",
+      "expected_status": "insufficient",
+      "criterion": "补引建议不得冒充已标引"
+    },
+    {
+      "id": "cross-page",
+      "target": "原文完整论述包含上下两页。",
+      "source_context": "前页句子在后页续完，两页连续且属于同一正文段。",
+      "expected_status": "direct",
+      "criterion": "完整摘录并列两页定位"
+    },
+    {
+      "id": "bibliography-only",
+      "target": "研究正文提出了概念甲。",
+      "source_context": "概念甲仅出现在参考文献题名中。",
+      "expected_status": "not_found",
+      "criterion": "书目题名不能充当正文论述"
+    },
+    {
+      "id": "scope-product",
+      "target": "农产品公共品牌结论适用于全部商品。",
+      "source_context": "正文对象明确限定为农产品区域公共品牌。",
+      "expected_status": "partial",
+      "criterion": "保留产品范围，不能自动外推"
+    }
+  ]
+}
