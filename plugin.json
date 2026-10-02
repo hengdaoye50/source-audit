@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "source-audit",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "论文与政策来源核准：Word读取、引用候选、PDF提取与必要OCR、正文证据账本及Word报告导出。语义由Codex执行者复核。",
   "author": {"name": "Jasper Zhang"},
   "repository": "https://github.com/hengdaoye50/source-audit",

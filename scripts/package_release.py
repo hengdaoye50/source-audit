@@ -6,7 +6,7 @@ from zipfile import ZipFile,ZIP_DEFLATED
 def package(root,output):
     root=Path(root).resolve();output=Path(output).resolve()
     allowed_roots={'skills','tests','scripts','.agents','deepseek-harness'}
-    allowed_top={'plugin.json','README.md','INSTALL.md','CHANGELOG.md','requirements.txt','.gitignore','LICENSE'}
+    allowed_top={'plugin.json','package.json','index.js','README.md','INSTALL.md','CHANGELOG.md','requirements.txt','.gitignore','LICENSE'}
     allowed_suffixes={'.py','.ps1','.json','.md','.txt','.yml','.yaml','.js','.mjs'}
     files=[]
     for path in sorted(root.rglob('*')):

@@ -13,6 +13,15 @@ spec.loader.exec_module(builder)
 
 
 class DeepSeekPackageTests(unittest.TestCase):
+    def test_repository_root_is_a_harness_bundle(self):
+        manifest = json.loads((ROOT / 'package.json').read_text('utf8'))
+        self.assertEqual(manifest['version'], json.loads((ROOT / 'plugin.json').read_text('utf8'))['version'])
+        self.assertTrue((ROOT / manifest['dsh']['bundle']['patch']).is_file())
+        self.assertTrue((ROOT / manifest['exports']['.']).is_file())
+        self.assertTrue((ROOT / 'skills/source-audit/SKILL.md').is_file())
+        for file in ('index.js', 'deepseek-harness/index.js', 'deepseek-harness/cordis.patch.yml', 'skills/source-audit'):
+            self.assertIn(file, manifest['files'])
+
     def test_complete_bundle_and_shared_core(self):
         with tempfile.TemporaryDirectory() as temp:
             output = Path(temp) / 'bundle.zip'
@@ -41,7 +50,7 @@ class DeepSeekPackageTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             (root / 'deepseek-harness').mkdir()
-            for name in ('package.json', 'index.js', 'cordis.patch.yml', 'README.md'):
+            for name in ('package.json', 'index.js', 'cordis.patch.yml', 'README.md', 'INSTALL-CONTRACT.md'):
                 (root / 'deepseek-harness' / name).write_bytes((ROOT / 'deepseek-harness' / name).read_bytes())
             for name in ('requirements.txt', 'LICENSE'):
                 (root / name).write_bytes((ROOT / name).read_bytes())

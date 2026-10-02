@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.5.1
+
+- 修复普通GitHub仓库网址安装时包根没有Harness组合包声明的问题。main根增加package.json、dsh.bundle.patch和Host入口，正确定位共享Skill资源。
+- 普通安装地址统一为 https://github.com/hengdaoye50/source-audit，不再提供分支浏览页作为安装地址。
+- 整理官方网址解析、组合包声明、资源分发与宿主加载契约；增加根安装入口测试及GitHub安装后组合包检查脚本。
+
 ## 0.5.0
 
 - 新增 DeepSeek Harness 原生 Host bundle，通过 `skills` 服务注册来源核准工作流；安装采用官方 `plugin_manager` 的 `install_bundle`。

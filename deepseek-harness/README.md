@@ -4,10 +4,18 @@
 
 ## 安装
 
-下载并解压 `source-audit-deepseek-0.5.0.zip`，保留整个 `source-audit-deepseek` 文件夹。源码中的 `deepseek-harness/` 只是适配模板，不能直接安装；从源码打包：
+推荐直接使用GitHub仓库网址：**https://github.com/hengdaoye50/source-audit**。0.5.1的仓库根目录已经声明Harness组合包，并含完整核准工具；把此网址交给插件安装入口，或让宿主调用 `plugin_manager`：
+
+```json
+{"action":"install_bundle","target":"https://github.com/hengdaoye50/source-audit"}
+```
+
+不要使用 `/tree/deepseek-harness` 浏览页作为安装地址。宿主安装规则及此次修复见 [安装契约](INSTALL-CONTRACT.md)。以下ZIP流程是可选的本地安装路径。
+
+下载并解压 `source-audit-deepseek-0.5.1.zip`，保留整个 `source-audit-deepseek` 文件夹。源码中的 `deepseek-harness/` 只是适配模板，不能直接安装；源码根目录支持直接安装；从源码打包独立ZIP：
 
 ```text
-python scripts/build_deepseek_bundle.py --output dist/source-audit-deepseek-0.5.0.zip
+python scripts/build_deepseek_bundle.py --output dist/source-audit-deepseek-0.5.1.zip
 ```
 
 Python 3.10+ 及依赖需要在所用终端环境中可用。在解压后的目录执行：

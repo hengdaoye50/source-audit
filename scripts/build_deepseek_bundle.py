@@ -10,7 +10,7 @@ def build(root, output):
     root, output = Path(root).resolve(), Path(output).resolve()
     adapter = root / 'deepseek-harness'
     files = [(adapter / name, name) for name in
-             ('package.json', 'index.js', 'cordis.patch.yml', 'README.md')]
+             ('package.json', 'index.js', 'cordis.patch.yml', 'README.md', 'INSTALL-CONTRACT.md')]
     files += [(root / name, name) for name in ('requirements.txt', 'LICENSE')]
     core = root / 'skills' / 'source-audit'
     for path in sorted(core.rglob('*')):

@@ -6,8 +6,12 @@ export const inject = ['skills'];
 
 // Resources are copied from the shared core by build_deepseek_bundle.py.
 export function apply(ctx) {
-  const base = fileURLToPath(new URL('./skills/source-audit/', import.meta.url));
-  const path = fileURLToPath(new URL('./skills/source-audit/SKILL.md', import.meta.url));
+  registerSkill(ctx, new URL('./skills/source-audit/', import.meta.url));
+}
+
+export function registerSkill(ctx, baseUrl) {
+  const base = fileURLToPath(baseUrl);
+  const path = fileURLToPath(new URL('SKILL.md', baseUrl));
   const raw = readFileSync(path, 'utf8').replace(/^\uFEFF/, '');
   const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---\r?\n/.exec(raw);
   if (!frontmatter || !/^name: source-audit\s*$/m.test(frontmatter[1])) {
