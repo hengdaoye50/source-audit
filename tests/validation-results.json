@@ -43,7 +43,7 @@
   },
   "word_report_export_implemented": true,
   "installed_in_codex": true,
-  "github_published": false,
+  "github_published": true,
   "two_case_trial": {
     "manuscripts": 2,
     "main_format": "docx",
@@ -79,5 +79,8 @@
     "policy_metadata_preserved": true,
     "legacy_trial_input_compatible": true,
     "installed_chat_end_to_end_run": false
-  }
+  },
+  "github_repository": "https://github.com/hengdaoye50/source-audit",
+  "github_visibility": "public",
+  "license": "MIT"
 }
