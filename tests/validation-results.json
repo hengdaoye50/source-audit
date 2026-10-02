@@ -1,10 +1,10 @@
 {
-  "stage": "unified_ledger_export_and_local_plugin_install",
+  "stage": "deepseek_harness_adapter",
   "date": "2026-10-02",
-  "plugin_version": "0.4.0",
+  "plugin_version": "0.5.0",
   "reader_version": "0.2.5",
   "automated_tests": {
-    "run": 112,
+    "run": 114,
     "failures": 0,
     "errors": 0,
     "passed": true,
@@ -62,13 +62,15 @@
     "skill": "source-audit:source-audit",
     "enabled": true,
     "errors": 0,
-    "model_turn_created": false
+    "model_turn_created": false,
+    "plugin_version": "0.4.0"
   },
   "installed_copy_tests": {
     "run": 112,
     "errors": 0,
     "failures": 0,
-    "passed": true
+    "passed": true,
+    "plugin_version": "0.4.0"
   },
   "unified_export": {
     "ledger_versions": [
@@ -82,5 +84,27 @@
   },
   "github_repository": "https://github.com/hengdaoye50/source-audit",
   "github_visibility": "public",
-  "license": "MIT"
+  "license": "MIT",
+  "deepseek_harness": {
+    "date": "2026-10-02",
+    "plugin_version": "0.5.0",
+    "harness_version": "0.1.0-rc.6",
+    "cordis_version": "4.0.1",
+    "skill_registry_version": "0.1.0-rc.6",
+    "checks": [
+      "real-registry-catalog",
+      "load-and-invocation-policy",
+      "packaged-core-resources",
+      "host-model-facing-render",
+      "plugin-disposal",
+      "remount"
+    ],
+    "passed": 6,
+    "profile_modified": false,
+    "model_called": false,
+    "full_profile_install_tested": false,
+    "deepseek_semantic_trial_completed": false,
+    "official_master_source_reviewed": true,
+    "official_master_runtime_tested": false
+  }
 }

@@ -25,7 +25,7 @@ description: 核准论文中文献和政策引用的正文来源，建立可复�
 
 运行 `python scripts/validate_ledger.py <账本.json> --source-root <来源文件目录>`。校验器检查格式、关联、正文区段、字符跨度、引文一致性、复核状态及政策层级等；它不独立判定语义正确性。`ready_for_report` 只表示账本满足导出前置条件，不等于生成或验收了 Word。
 
-当前开发版已实现读取、必要OCR、候选发现与检索、定位及报告导出。语义由Codex执行者逐项判读，脚本不将检索分数或字符匹配转成语义通过。阅读 [验收说明](references/acceptance.md) 区分程序检查、真实试跑与独立评测。Word目标在原账本中保存 `target.docx_location`，传入主稿读取结果和原件目录校验。
+当前开发版已实现读取、必要OCR、候选发现与检索、定位及报告导出。语义由当前宿主执行者逐项判读，脚本不将检索分数或字符匹配转成语义通过。阅读 [验收说明](references/acceptance.md) 区分程序检查、真实试跑与独立评测。Word目标在原账本中保存 `target.docx_location`，传入主稿读取结果和原件目录校验。
 
 报告出口见 [报告数据说明](references/report-format.md)。新任务整理统一证据账本，运行 `scripts/export_report.py`；账本错误或待复核项会阻止导出。0.2支持Word来源段落，政策层级与引用类型保留。旧双案例预览数据仅为兼容输入。导出后必须渲染Word，逐页查看，再确认最终Word保留全部引文。不得省略政策原件层级核查。
 

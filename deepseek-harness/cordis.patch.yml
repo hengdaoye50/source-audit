@@ -1,0 +1,4 @@
+- insert:
+    - id: source-audit-skill
+      name: '@local/dsh-source-audit'
+      config: {}

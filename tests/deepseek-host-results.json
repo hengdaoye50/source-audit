@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-02",
+  "plugin_version": "0.5.0",
+  "harness_version": "0.1.0-rc.6",
+  "cordis_version": "4.0.1",
+  "skill_registry_version": "0.1.0-rc.6",
+  "checks": ["real-registry-catalog", "load-and-invocation-policy", "packaged-core-resources", "host-model-facing-render", "plugin-disposal", "remount"],
+  "passed": 6,
+  "profile_modified": false,
+  "model_called": false,
+  "full_profile_install_tested": false,
+  "deepseek_semantic_trial_completed": false,
+  "official_master_source_reviewed": true,
+  "official_master_runtime_tested": false
+}
