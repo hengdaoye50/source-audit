@@ -17,3 +17,5 @@
 - [Plugin Manager说明](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/boot/plugin-manager/README.md)
 
 历史缺陷：0.5.0的main根目录只提供Codex插件；Harness声明仅在子目录模板和专用分支。给用户分支浏览网址，或让其安装普通仓库地址，会指向不具备组合包声明的根。0.5.1改为同一仓库根同时支持Codex和Harness，普通GitHub网址即可获取完整Harness包。Python依赖仍需当前终端环境提供；不在安装脚本中悄悄安装。
+
+实际验收：使用pnpm 11.19.0从普通GitHub网址下载安装0.5.1，再用已安装官方dsh CLI 0.1.0-rc.6在工作区隔离profile运行同一网址的安装操作，包被自动加入 `dsh.profile.bundles`。官方App boot组件确认组合包声明、补丁解析与组合；真实Cordis/Skill组件成功加载安装包的JavaScript入口与核准工作流，核准工具资源存在。验收没有调用模型，也没有更改用户现用profile；不宣称已在用户当前Web界面验证安装。

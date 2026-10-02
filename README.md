@@ -4,7 +4,7 @@
 
 **DeepSeek Harness直接安装网址：[https://github.com/hengdaoye50/source-audit](https://github.com/hengdaoye50/source-audit)。** 将这个网址交给宿主的插件安装入口，或要求其调用 `plugin_manager` 的 `install_bundle`，`target` 为这个网址。main根目录现在声明 `dsh.bundle.patch`，不需要使用 `/tree/` 分支浏览页、选择子目录或自行打包。协议整理见 [Harness安装契约](deepseek-harness/INSTALL-CONTRACT.md)。
 
-**当前完成：Word读取、引用候选发现、PDF提取及必要OCR、检索与定位、执行者语义核准流程、统一账本校验与Word导出。114项程序测试通过，两个真实案例已交付报告。Codex 0.4.0安装副本已验证；新增 Harness 适配包通过真实 Cordis/Skill 组件6项检查。代码仓库已公开。尚未完成：独立语义评测、新聊天完整调用验收、Harness当前profile安装与DeepSeek模型完整案例试跑。**
+**当前完成：Word读取、引用候选发现、PDF提取及必要OCR、检索与定位、执行者语义核准流程、统一账本校验与Word导出。115项程序测试通过，两个真实案例已交付报告。Codex 0.4.0安装副本已验证。Harness 0.5.1已从普通GitHub网址实际下载安装，经官方dsh CLI在隔离profile中识别并加入组合包；补丁组合、模块与Skill加载通过。代码仓库已公开。尚未完成：独立语义评测、新聊天完整调用验收、用户现用Harness profile验收与DeepSeek模型完整案例试跑。**
 
 Codex 安装见 [INSTALL.md](INSTALL.md)。DeepSeek Harness 适配包的打包、安装、调用和兼容范围见 [专用说明](deepseek-harness/README.md)，两者共用同一套核准核心，原件不进入分发包。
 

@@ -5,6 +5,7 @@
 - 修复普通GitHub仓库网址安装时包根没有Harness组合包声明的问题。main根增加package.json、dsh.bundle.patch和Host入口，正确定位共享Skill资源。
 - 普通安装地址统一为 https://github.com/hengdaoye50/source-audit，不再提供分支浏览页作为安装地址。
 - 整理官方网址解析、组合包声明、资源分发与宿主加载契约；增加根安装入口测试及GitHub安装后组合包检查脚本。
+- 115项程序检查通过；普通GitHub网址实际下载安装成功，官方dsh CLI 0.1.0-rc.6在隔离profile自动将包加入dsh.profile.bundles。官方App boot组件识别组合包、组合补丁、加载入口及发现Skill全部通过。不修改用户现用profile、不调用模型。
 
 ## 0.5.0
 

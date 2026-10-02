@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-02",
+  "plugin_version": "0.5.1",
+  "install_url": "https://github.com/hengdaoye50/source-audit",
+  "harness_cli_version": "0.1.0-rc.6",
+  "pnpm_version": "11.19.0",
+  "github_download_and_install_passed": true,
+  "official_cli_install_passed": true,
+  "official_cli_registered_profile_bundle": true,
+  "official_app_boot_bundle_recognized": true,
+  "patch_composed": true,
+  "package_export_loaded": true,
+  "skill_loaded": true,
+  "core_resources_present": true,
+  "isolated_profile_only": true,
+  "existing_user_profile_modified": false,
+  "user_web_ui_install_verified": false,
+  "model_called": false
+}
