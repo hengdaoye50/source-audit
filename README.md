@@ -1,87 +1,186 @@
 # Source Audit｜文献与政策来源核准
 
-本地来源核准插件开发版，版本 0.5.1，支持 Codex 与 DeepSeek Harness。
+**把论文中的引用表述，核对到参考文献或政策文件的正文。**
 
-**DeepSeek Harness直接安装网址：[https://github.com/hengdaoye50/source-audit](https://github.com/hengdaoye50/source-audit)。** 将这个网址交给宿主的插件安装入口，或要求其调用 `plugin_manager` 的 `install_bundle`，`target` 为这个网址。main根目录现在声明 `dsh.bundle.patch`，不需要使用 `/tree/` 分支浏览页、选择子目录或自行打包。协议整理见 [Harness安装契约](deepseek-harness/INSTALL-CONTRACT.md)。
+Source Audit 是在本地处理研究材料的来源核准插件，支持 **Codex** 和 **DeepSeek Harness**。提供主稿和参考全文后，插件引导当前模型逐项寻找原文证据、核对支持范围、记录出处，并生成可复核的 Word 来源核准报告。
 
-**当前完成：Word读取、引用候选发现、PDF提取及必要OCR、检索与定位、执行者语义核准流程、统一账本校验与Word导出。115项程序测试通过，两个真实案例已交付报告。Codex 0.4.0安装副本已验证。Harness 0.5.1已从普通GitHub网址实际下载安装，经官方dsh CLI在隔离profile中识别并加入组合包；补丁组合、模块与Skill加载通过。代码仓库已公开。尚未完成：独立语义评测、新聊天完整调用验收、用户现用Harness profile验收与DeepSeek模型完整案例试跑。**
+它关注一个具体问题：**论文里写的这句话，所引来源是否真的能够支撑？** 除了找到相关文字，还要核对原文研究对象、条件、作者立场和推论强度，避免把“讨论过这个主题”当成“证明了这个结论”。
 
-Codex 安装见 [INSTALL.md](INSTALL.md)。DeepSeek Harness 适配包的打包、安装、调用和兼容范围见 [专用说明](deepseek-harness/README.md)，两者共用同一套核准核心，原件不进入分发包。
+当前版本：`0.5.1` · [版本记录](CHANGELOG.md) · [下载发布包](https://github.com/hengdaoye50/source-audit/releases)
 
-## 已实现的能力
+## 可以用来做什么
 
-- 将来源文件、正文区段、待核子命题、证据及支持边界保存为统一 JSON 账本。
-- 校验正文属性、章节与页码、字符位置、引文一致性、来源版本、跨页连续性及复核状态。
-- 拒绝把检索未完成当作“未找到”，或把政策解读、二手归纳当成正式原件核验。
-- 区分明确引用、建议补引和政策引用统计。
-- 核对来源文件摘要，并限制读取在指定来源目录内。
-- 直接读取 `.docx` 主稿的正文、表格、脚注和尾注；位置用段落、单元格及注释编号，不猜固定页码，不调用 OCR。
-- PDF 文字层优先；文本不足时可启用 Windows 中文 OCR，文字正常的页不做 OCR。按文件摘要和读取器版本缓存。
-- 候选检索排除已标注为摘要与书目的区段，保留未知正文边界待复核；自动分区可能漏识别，候选不得直接作为证据。精确定位工具只接受已标为正文的区段。
+- **投稿或提交前的引用审校**：逐项检查主稿中的引用，找出范围扩大、因果升级、对象错配、引文不完整等问题。
+- **文献综述的来源复核**：核对概括是否忠实于作者论述，区分不同作者的立场，检查多篇来源是否分别支撑复合命题。
+- **政策文件的来源核准**：区分正式文件、政策解读和二手归纳，核对版本、日期及引号内表述。
+- **修改稿的证据整理**：为已有引用补全可定位的正文证据，说明需要保留的限定条件，并给出处理建议。
 
-Word 读取、检索和账本校验器使用 Python 标准库，建议 Python 3.10 或更新版本。PDF 提取使用 `pdfplumber`，异常文字层可尝试 `pypdf`；Word报告使用 `python-docx`。Windows OCR 还需 `pypdfium2`、Pillow 与已安装的 OCR 语言包。请求语言不可用时记录实际回退语言，不伪装成原请求语言。测试环境版本见 `requirements.txt`；运行时不要自动安装系统语言包。
+核准范围以用户指定的稿件和所供来源为基础。缺少原件、版本不明或材料不可读时，报告会说明具体缺口；需要另行寻找来源时，由执行者在用户授权范围内处理。
 
-校验器支持本项目 JSON Schema 使用的关键字，不是通用 JSON Schema 引擎。
+## 核心功能
 
-## 运行
+### 1. 直接读取 Word，按情况处理 PDF
 
-在此目录运行：
+主稿优先读取 `.docx`，提取正文、表格以及与正文关联的脚注、尾注。普通 Word 文本不做 OCR，位置使用章节、段落、单元格和注释编号，不推测固定页码。旧式 `.doc` 需先转换成 `.docx`。
+
+PDF 参考全文优先读取文字层；遇到乱码或提取异常时，尝试备用提取方式，再按需使用 OCR。所供来源为 Word 时，保留原始段落定位；转写稿与原版分别说明。
+
+### 2. 整理引用候选，允许模糊溯源
+
+工具整理脚注和作者年份式引用候选，辅助关联所供参考全文，保留同一作者或题名的多个文件与版本候选。无标题书目、脚注归属及复合命题仍需执行者检查。
+
+溯源可以使用多个关键词和近义表达，不要求论文措辞与来源逐字一致。同一来源有多处相关论述时，可以分别列出完整证据。检索分数用于寻找候选，不直接生成核准结论。
+
+### 3. 保留完整正文证据和出处
+
+用于支撑论断的证据取自来源正文，排除摘要和参考文献表。原句、相邻语境和必要限定条件需经阅读确认；不把零散句子拼接成一段连续原文。
+
+每条证据记录来源文件、章节及具体位置：PDF 区分文件页序与可确认的印刷页码，Word 使用段落或其他原始位置。自动识别的章节、正文边界和印页都是候选，确认后才能用于交付。跨页引文和 OCR 转写需要对照原页。
+
+### 4. 核对“能支撑到什么程度”
+
+工作流逐项检查研究对象、样本、地域、时间、比较组、作者立场和因果强度。复合表述拆成子命题核对，避免某一句得到支持，就把整段判为通过。
+
+例如，来源讨论某一群体的“可能影响”，主稿却写成所有群体的“必然结果”，报告应指出对象和推论强度的扩大。以综述主张研究空白时，也不能仅凭几篇主题相关文献就认定“此前无人研究”。
+
+| 判定 | 含义 |
+|---|---|
+| 直接支撑 | 所核表述与原文对象、条件及论述强度基本一致。 |
+| 部分支撑 | 有正文依据，但只能支撑部分命题，或需要收窄范围、补上条件。 |
+| 相关但不足 | 来源讨论相关主题，但所列证据不足以支持主稿的具体结论。 |
+| 未找到 | 已完成记录范围内的检索和正文检查，仍未找到支持证据。 |
+| 无法核准 | 缺少原件、版本无法确认、文本不可读等条件使核准无法完成。 |
+
+这些判定由当前模型执行者结合上下文作出。程序校验不独立裁定语义正确性，也不保证穷尽全部相关文献。
+
+### 5. 单独核查政策来源层级
+
+政策核准区分正式文件、解读材料和二手归纳。分别记录文件日期与网页公开日期，检查引用版本和引号内文字是否连续存在于原文。
+
+只读取了政策解读，不能宣称核验了正式原件；只读取了年度政策的二手汇总，也不能宣称逐年核验。缺件或层级限制会进入报告的支持边界。
+
+### 6. 建立证据账本，校验后导出 Word
+
+核准过程保存为结构化证据账本，关联主稿表述、子命题、来源、原文引句、位置、判定和处理建议。文件指纹与文字位置用于检查证据是否仍对应同一原件，便于回看和复核。
+
+校验器检查引文与原文是否一致、位置是否有效、跨页是否连续、复合命题是否漏核，以及复核状态和政策层级是否满足要求。账本存在错误或待复核项时，会阻止报告导出。
+
+## 最终交付什么
+
+主要成果是一份 `.docx` 来源核准报告。报告按任务适用内容组织：
+
+1. 简短结论、判定口径与核准矩阵。
+2. 明确引用的逐项核准。
+3. 建议补引项及政策来源核准项。
+4. 涉及的文献与文件清单。
+
+每个核准项依次给出：**主稿表述 → 判定 → 完整正文证据及位置 → 支持边界 → 处理建议**。结构化证据账本保留在任务目录，支持复核和后续修改。
+
+Word 导出后还需渲染并逐页检查引文保留、编号、统计和排版。宿主缺少文档渲染能力时，应明确说明页面验收未完成，不能仅凭文件生成成功就宣称正式报告已验收。
+
+## 安装
+
+### DeepSeek Harness
+
+将下面这个普通 GitHub 仓库网址交给 Harness 的插件安装入口：
+
+**https://github.com/hengdaoye50/source-audit**
+
+也可以直接在 Harness 聊天中发送：
+
+> 请安装来源核准插件，使用 plugin_manager 的 install_bundle，target 为 https://github.com/hengdaoye50/source-audit。
+
+仓库根目录已声明 Harness 组合包并包含完整工作流与配套工具，无需指定子目录或自行打包。使用普通仓库网址，不使用 `/tree/` 分支浏览页。安装后检查宿主返回的生效状态；提示需要重启时，按提示处理。
+
+详细说明：[Harness 安装与使用](deepseek-harness/README.md) · [官方协议整理及安装验证](deepseek-harness/INSTALL-CONTRACT.md)
+
+### Codex
+
+克隆或下载仓库，放在长期保留的目录，按 [Codex 安装说明](INSTALL.md) 登记本地插件市场并安装 `source-audit@source-audit-local`。安装后使用“文献与政策来源核准”工作流，或在任务中明确指定 `source-audit`。
+
+两个宿主共用同一套核准规则和本地工具。
+
+### 运行环境
+
+需要 Python 3.10 或更新版本，并让宿主终端能够使用该解释器。在下载或解压后的插件目录中安装依赖：
 
 ```text
-python -m unittest discover -s tests -v
-python skills/source-audit/scripts/validate_ledger.py tests/fixtures/valid-ledger.json
-python skills/source-audit/scripts/validate_ledger.py ledger.json --source-root local-data --output validation.json
-python skills/source-audit/scripts/read_manuscript.py local-data/main.docx --source-root local-data --output outputs/main.json
-python skills/source-audit/scripts/read_sources.py local-data/references --source-root local-data --cache-dir outputs/cache --output outputs/corpus.json
-python skills/source-audit/scripts/search_sources.py outputs/corpus.json --query 技术门槛 --query 数字排斥 --output outputs/candidates.json
+python -m pip install -r requirements.txt
 ```
 
-扫描 PDF 可在 `read_sources.py` 中加 `--ocr windows`；抽页测试可加 `--pages 1,2`（仅限单文件）。默认不启用 OCR。旧式 `.doc` 尚不支持直接读取，需先转换为 `.docx`。
+依赖实测版本见 [requirements.txt](requirements.txt)。Word 文本读取、候选检索与账本校验使用 Python 标准库；PDF 提取与 Word 报告导出需要对应依赖。
 
-Word 主稿账本如含 `target.docx_location`，校验时另传 `--manuscript outputs/main.json --manuscript-root local-data`；工具校验原主稿摘要、块位置和目标表述，并保留未复核状态。
+扫描 PDF 的本地 OCR 目前支持 Windows，使用已安装的 OCR 语言包，不自动安装系统语言包。其他系统仍可处理 Word 和带文字层的 PDF；没有可用 OCR 时，应说明扫描材料无法核准。最终页面验收还需要宿主提供 Word 渲染和查看能力。
 
-读取成功不等于证据通过。自动章节、印页、页边文字与双栏识别均为候选；新提取区段均标 `unverified`。页眉、页脚及脚注候选保存在 PDF `ingestion[].pages[].ancillary_text`，不删除；主稿的政策脚注需要从这些保留文字进一步核查，不能因正文索引没有它们而称“未找到”。Word 的脚注通过原始注释 ID 关联。
+## 怎样使用
 
-本地检索当前是中文词片段与英文词的候选排序，不是完整语义检索。可添加近义查询，模型负责判断候选是否足以支持命题。它不会把检索得分转换成通过结论。
-
-新增 `discover_citations.py` 将脚注或作者年份式引用与所供文件候选关联；支持省略作者的连续年份。文件匹配保留多个候选，不能自动确认版本。无标题书目识别采用连续书目样式段落的启发式规则，需执行者确认。
-
-`export_report.py` 首选统一证据账本0.2输入，兼容旧0.1账本及双案例试跑数据。运行同一账本校验器，错误和待复核项阻止导出，Word来源保留段落定位，政策层级与引用类型保留在报告。参见 `skills/source-audit/references/report-format.md`。它不自行完成语义核准，页面渲染与检查由执行者完成；旧试跑数据不会自动获得新增复核记录。
+准备主稿、参考全文和需要核查的政策文件，告知各自路径和核准范围。例如：
 
 ```text
-python skills/source-audit/scripts/export_report.py ledger.json --source-root local-data --manuscript outputs/main.json --manuscript-root local-data --output outputs/report.docx --qa-output outputs/report-qa.json
+论文核准/
+├─ 主稿.docx
+├─ 参考文献/
+│  ├─ 文献一.pdf
+│  └─ 文献二.docx
+└─ 政策文件/
+   └─ 政策原件.pdf
 ```
 
-CLI 返回码：0 表示账本满足报告导出前置条件，2 表示存在错误或待复核项。结果区分 `errors`、`blockers`、`warnings`，统计按引用角色分别生成。
+把以下任务描述发送给已安装插件的宿主，并替换实际路径：
 
-`ready_for_report` 不代表语义已经独立审定，更不代表 Word 已生成或排版通过。语义和完整句段须经阅读确认；原文件摘要校验不证明提取文字必然正确。原文中的年份、符号或否定词仍需必要原页复核。
+> 使用 source-audit 核准 D:/论文核准/主稿.docx 中的文献和政策引用。参考全文在 D:/论文核准/参考文献，政策原件在 D:/论文核准/政策文件。只取来源正文，保留表意完整的句段，标明章节及页码或 Word 段落；允许近义检索，多处相关证据分别列出。逐项说明支持程度、范围限制和处理建议，最后生成 Word 来源核准报告，并保留证据账本。原文件保持不变。
 
-## 文件入口
+也可以限定检查某一章节、某几组引用或政策表述。工作流按以下顺序推进：读取主稿与来源，整理引用及子命题，检索候选，阅读正文并核对语义，校验账本，导出并检查报告。
 
-- 工作流：`skills/source-audit/SKILL.md`
-- 格式：`skills/source-audit/schemas/ledger.schema.json`
-- 格式解释：`skills/source-audit/references/evidence-format.md`
-- 验收口径：`skills/source-audit/references/acceptance.md`
-- 自制账本与语义案例：`tests/fixtures/`
-- 本次自动验证记录：`tests/validation-results.json`
+## 怎样控制 OCR 和阅读成本
 
-## 本次真实材料验证
+- Word 文本直接读取，PDF 优先使用文字层，扫描或异常页才按需 OCR。
+- 提取结果按文件指纹、读取器版本和 OCR 选项缓存，减少重复处理。
+- 先在本地检索，再让模型阅读候选片段与必要上下文，减少不必要的全文输入。
+- 候选不足时扩大检索和阅读范围；为节约输入量而省略关键限定条件，会影响核准质量。
 
-- 29 篇 PDF 参考文献、407 页成功提取，全程未调用 OCR。
-- 原报告 62 组引文均可在新提取文本中连续找回。这是提取回归检查，不是新的语义准确率。
-- 扫描主稿抽测 2 页，Windows 中文 OCR 读取成功，结果仍待原页复核；未将抽测宣称为全稿 OCR 验证。
-- 以用户修订报告进行真实 DOCX 读取测试，607 个非空文本块成功读取；它是报告文件的兼容性测试，不是新论文的引用识别准确率测试。
+缓存不能替代语义复核。文件更换、版本变化或证据存在疑点时，应重新检查对应原件。
 
-真实全文、抽取结果和缓存仅位于项目内部工作目录，不纳入插件分发包。印页候选不自动视为已核准。
+## 验证范围与能力边界
 
-## 发布与数据
+截至 `0.5.1`：
 
-本轮双案例验证：2份Word主稿不做OCR，覆盖42组引用、82种来源，选取96组不重复正文引文。两份报告的来源摘要及引文绑定检查0错误，报告全部页面检查通过。这是执行者核准的真实试跑，不能换算成总体准确率或独立评审结论。
+| 已完成验证 | 结果与范围 |
+|---|---|
+| 程序测试 | 115 项通过，覆盖读取、引用候选、证据约束、报告导出和安装包入口等行为。 |
+| 两个真实案例试跑 | 2 份 Word 主稿，42 组引用、82 种来源、96 组不重复正文引文；已交付两份报告，32 页均经执行者查看。 |
+| Codex 安装 | `0.4.0` 安装副本启用、工作流发现及 112 项测试通过。 |
+| Harness 网址安装 | `0.5.1` 从普通 GitHub 网址实际下载安装；官方 CLI `0.1.0-rc.6` 在隔离配置中登记组合包，补丁、入口与 Skill 加载通过。 |
 
-本机通过Codex插件命令登记本目录内的市场并安装，插件ID为`source-audit@source-audit-local`。宿主`skills/list`发现已启用的`source-audit:source-audit`，没有插件解析错误；安装副本112项测试通过。没有创建额外模型任务，也不把这些检查称为新聊天的完整任务验收。安装步骤见 [INSTALL.md](INSTALL.md)。
+上述程序和案例验证不能换算成总体语义准确率。真实案例由执行者核准，尚未完成独立语义评测、DeepSeek 模型的完整案例试跑，以及用户当前 Harness Web 界面的安装验收。后续 Harness 预览版本可能变更接口，不能视为已全部实测兼容。
 
-本地登记与安装已完成。公开代码仓库：[hengdaoye50/source-audit](https://github.com/hengdaoye50/source-audit)，采用MIT许可证。无外部服务连接；仓库不包含真实论文全文或核准报告。
+自动章节、页码、双栏顺序和正文边界需要复核；OCR 的年份、否定词和符号等关键文字需要必要原页校读。本插件核准的是所列引用与证据关系，不自动完成论文全部事实审查。
 
-本目录不包含项目论文全文和用户修订报告。自制样例随代码分发；用户全文、缓存及报告留在本机。MIT许可证只覆盖本仓库代码与自制材料，不改变输入文献自身的版权。
+完整记录：[验收口径](skills/source-audit/references/acceptance.md) · [程序与试跑记录](tests/validation-results.json) · [Harness 安装验证](tests/deepseek-install-results.json)
 
-本地工具处理不等于模型完全离线；后续通过 Codex 阅读候选文字仍涉及所用模型服务。
+## 数据与许可证
+
+文件提取、候选检索和证据校验在本地执行。模型阅读候选片段仍使用当前宿主配置的模型服务，因此不承诺完全离线；实际数据处理范围取决于宿主和模型配置。
+
+仓库及分发包不包含真实论文全文、用户修订报告、真实核准报告或全文缓存。测试样例为自制材料，输入文献和工作成果保留在用户指定的本地任务目录。
+
+本项目采用 [MIT 许可证](LICENSE)，覆盖代码与本仓库自制材料，不改变输入文献自身的版权。
+
+## 开发与复核入口
+
+| 文件 | 用途 |
+|---|---|
+| [SKILL.md](skills/source-audit/SKILL.md) | 模型执行的来源核准工作流。 |
+| [证据格式说明](skills/source-audit/references/evidence-format.md) | 证据账本字段、关联与复核要求。 |
+| [账本 Schema](skills/source-audit/schemas/ledger.schema.json) | 账本结构定义。 |
+| [报告接口说明](skills/source-audit/references/report-format.md) | 统一账本导出与旧数据兼容方式。 |
+| [本地工具](skills/source-audit/scripts/) | 主稿读取、来源提取、引用候选、检索、校验及 Word 导出。 |
+| [测试与自制样例](tests/) | 程序回归检查及语义验收草案。 |
+
+在仓库根目录运行程序检查：
+
+```text
+python -m unittest discover -s tests -q
+```
+
+校验器实现本项目 Schema 所需的约束，不是通用 JSON Schema 引擎。它检查证据记录与原件绑定；支持程度、句段完整性和上下文判断仍由执行者负责。
